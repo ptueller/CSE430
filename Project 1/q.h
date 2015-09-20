@@ -21,30 +21,31 @@ void FreeItem(qnode* head) {
 	free(head);
 }
 
-void InitQueue(qnode* head) {
-	head->next = head;
-	head->prev = head;
+void InitQueue(queue* q) {
+	q->head->next = q->head;
+	q->head->prev = q->head;
 }
 
-void AddQueue(qnode* head, qnode* item) {
-	item->next = head;
-	item->prev = head->prev->prev;
-	head->prev = item;
+void AddQueue(queue* q, qnode* item) {
+	q->head->prev->next = item;
+	item->prev = q->head->prev;
+	q->head->prev = item;
+	item->next = q->head;
 }
 
-qnode* DelQueue(qnode* head) {
-	qnode* returnValue = head;
-	head->next->prev = head->prev;
-	head->prev->next = head->next;
-	if(head != head->next) {
-		head = head->next;
+qnode* DelQueue(queue* q) {
+	qnode* returnValue = q->head;
+	q->head->next->prev = q->head->prev;
+	q->head->prev->next = q->head->next;
+	if(q->head != q->head->next) {
+		q->head = q->head->next;
 	}
 	else {
-		head = NULL;
+		q->head = NULL;
 	}
 	return returnValue;
 }
 
-void RotateQueue(qnode* head) {
-	head = head->next;
+void RotateQueue(queue* q) {
+	q->head = q->head->next;
 }
