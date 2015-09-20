@@ -37,7 +37,12 @@ void AddQueue(qnode* head, qnode* item) {
 qnode* DelQueue(qnode* head) {
 	head->next->prev = head->prev;
 	head->prev->next = head->next;
-	queue->head = head->next;
+	if(head != head->next) {
+		queue->head = head->next;
+	}
+	else {
+		queue->head = NULL;
+	}
 	return head;
 }
 
