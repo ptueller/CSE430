@@ -20,7 +20,6 @@ void FreeItem(qnode* head) {
 void InitQueue(qnode* head) {
 	head->next = head;
 	head->prev = head;
-	queue->head = head;
 }
 
 void AddQueue(qnode* head, qnode* item) {
@@ -30,17 +29,18 @@ void AddQueue(qnode* head, qnode* item) {
 }
 
 qnode* DelQueue(qnode* head) {
+	qnode* returnValue = head;
 	head->next->prev = head->prev;
 	head->prev->next = head->next;
 	if(head != head->next) {
-		queue->head = head->next;
+		head = head->next;
 	}
 	else {
-		queue->head = NULL;
+		head = NULL;
 	}
-	return head;
+	return returnValue;
 }
 
 void RotateQueue(qnode* head) {
-	queue->head = head->next;
+	head = head->next;
 }
