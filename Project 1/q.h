@@ -24,13 +24,8 @@ void InitQueue(qnode* head) {
 }
 
 void AddQueue(qnode* head, qnode* item) {
-	qnode *iterator = head;
-	while(iterator->next != head) {
-		iterator = iterator->next;
-	}
 	item->next = head;
-	item->prev = iterator;
-	iterator->next = item;
+	item->prev = head->prev->prev;
 	head->prev = item;
 }
 
