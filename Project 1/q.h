@@ -42,5 +42,5 @@ qnode* DelQueue(qnode* head) {
 }
 
 void RotateQueue(qnode* head) {
-	
+	queue->head = head->next;
 }
