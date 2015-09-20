@@ -1,8 +1,8 @@
 #include "q.h"
-#include <stdlib.h>
+#include <stdio.h>
 
 int main() {
-	queue *testQ1 = malloc(sizeof queue);
+	queue *testQ1 = malloc(sizeof(queue));
 	testQ1->head = NewItem();
 	testQ1->head->payload = 1;
 	InitQueue(testQ1->head);

@@ -1,13 +1,17 @@
+#include <stdlib.h>
 
-typedef struct qnode {
+typedef struct qnode qnode;
+typedef struct queue queue;
+
+struct qnode {
 	qnode *prev;
 	qnode *next;
 	int payload;
-} qnode;
+};
 
-typedef struct queue {
+struct queue {
 	qnode *head;
-} queue;
+};
 
 qnode* NewItem() {
 	return malloc(sizeof(qnode));
