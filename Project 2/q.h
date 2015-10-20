@@ -1,24 +1,19 @@
 #include <stdlib.h>
-#include <tcb.h>
+#include "tcb.h"
 
-typedef struct qnode qnode;
 typedef struct queue queue;
 
-struct qnode {
-	qnode *prev;
-	qnode *next;
-	TCB_t payload;
-};
-
 struct queue {
-	qnode *head;
+	TCB_t *head;
 };
 
-qnode* NewItem() {
-	return malloc(sizeof(qnode));
+queue* RunQ;
+
+TCB_t* NewItem() {
+	return malloc(sizeof(TCB_t));
 }
 
-void FreeItem(qnode* head) {
+void FreeItem(TCB_t* head) {
 	free(head);
 }
 
@@ -27,15 +22,15 @@ void InitQueue(queue* q) {
 	q->head->prev = q->head;
 }
 
-void AddQueue(queue* q, qnode* item) {
+void AddQueue(queue* q, TCB_t* item) {
 	q->head->prev->next = item;
 	item->prev = q->head->prev;
 	q->head->prev = item;
 	item->next = q->head;
 }
 
-qnode* DelQueue(queue* q) {
-	qnode* returnValue = q->head;
+TCB_t* DelQueue(queue* q) {
+	TCB_t* returnValue = q->head;
 	q->head->next->prev = q->head->prev;
 	q->head->prev->next = q->head->next;
 	if(q->head != q->head->next) {
