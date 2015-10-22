@@ -5,13 +5,15 @@
  * Name: Sami Mian, Peter Tueller
  * CSE 430
  * Project 2
+ * Description: Three threads will spawn and will take turns updating a global variable and printing it.
+ * Each thread has its own local variable that is also updates and prints. The turn taking is done using busy waiting semaphores.
  */
  
  int value, sem1, sem2, sem3;
  
  //Thread Functions
  void thread1(void) {
- 	int local = 0;
+ 	static int local = 0;
  	while(1) {
  		while(sem1==0) {
  			yield();
@@ -23,7 +25,7 @@
  }
  
  void thread2(void) {
- 	int local = 0;
+ 	static int local = 0;
  	while(1) {
  		while(sem2==0) {
  			yield();
@@ -35,7 +37,7 @@
  }
  
  void thread3(void) {
- 	int local = 0;
+ 	static int local = 0;
  	while(1) {
  		while(sem3==0) {
  			yield();
