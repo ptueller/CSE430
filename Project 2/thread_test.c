@@ -17,7 +17,7 @@
  			yield();
  		}
  		sem1--;
- 		printf("Local value = %d, Global Value = %d\n",local++,value++);
+ 		printf("Thread1: Local value = %d, Global Value = %d\n",local++,value++);
  		sem2++;
  	}
  }
@@ -29,7 +29,7 @@
  			yield();
  		}
  		sem2--;
- 		printf("Local value = %d, Global Value = %d\n",local++,value++);
+ 		printf("Thread2: Local value = %d, Global Value = %d\n",local++,value++);
  		sem3++;
  	}
  }
@@ -41,19 +41,20 @@
  			yield();
  		}
  		sem3--;
- 		printf("Local value = %d, Global Value = %d\n",local++,value++);
+ 		printf("Thread3: Local value = %d, Global Value = %d\n",local++,value++);
  		sem1++;
  	}
  }
  
  int main() {
  	RunQ = malloc(sizeof(queue)); //Init RunQ
+	InitQueue(RunQ);
  	value = 0;
  	sem1 = 1;
  	sem2 = 0;
  	sem3 = 0;
- 	startThread(&thread1); //Start Threads
- 	startThread(&thread2);
- 	startThread(&thread3);
+ 	start_thread(&thread1); //Start Threads
+ 	start_thread(&thread2);
+ 	start_thread(&thread3);
  	run(); //Run
  }

@@ -1,4 +1,5 @@
 #include <ucontext.h>
+#include <string.h>
 
 typedef struct TCB_t {
      struct TCB_t     *next;

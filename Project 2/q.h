@@ -18,15 +18,23 @@ void FreeItem(TCB_t* head) {
 }
 
 void InitQueue(queue* q) {
-	q->head->next = q->head;
-	q->head->prev = q->head;
+	if(q->head != NULL) {
+		q->head->next = q->head;
+		q->head->prev = q->head;
+	}
 }
 
 void AddQueue(queue* q, TCB_t* item) {
-	q->head->prev->next = item;
-	item->prev = q->head->prev;
-	q->head->prev = item;
-	item->next = q->head;
+	if(q->head != NULL) {
+		q->head->prev->next = item;
+		item->prev = q->head->prev;
+		q->head->prev = item;
+		item->next = q->head;
+	}
+	else {
+		q->head = item;
+		InitQueue(q);
+	}
 }
 
 TCB_t* DelQueue(queue* q) {

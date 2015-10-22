@@ -18,7 +18,7 @@ void run()
 void yield() // similar to run
 {
 	ucontext_t parent;
-	RotateQ(RunQ); //rotate the run Q;
+	RotateQueue(RunQ); //rotate the run Q;
 	getcontext(&parent);
 	swapcontext(&parent,&(RunQ->head->context)); //swap the context, from previous thread to the thread pointed to by RunQ
 }
