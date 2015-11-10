@@ -2,8 +2,8 @@
 
 typedef struct sem_t {
 	int value;
-	struct queue semQ;
-};
+	struct queue *semQ;
+} sem_t;
 
 void InitSem(struct sem_t *sem, int value) {
 	sem->value=value;
