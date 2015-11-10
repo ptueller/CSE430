@@ -13,7 +13,7 @@ void P(struct sem_t *sem) {
 	sem->value--;
 	if(sem->value<0) {
 		AddQueue(sem->semQ,DelQueue(RunQ));
-		swapcontext(&parent,&(RunQ->head->context)); //Move to the new head of the RunQ
+		swapcontext(&parent,&(RunQ->head->context)); //Execute the new head of the RunQ
 	}
 }
 
