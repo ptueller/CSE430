@@ -5,45 +5,89 @@
  * Name: Sami Mian, Peter Tueller
  * CSE 430
  * Project 3
- * Description: Three threads will spawn and will take turns updating a global variable and printing it.
- * Each thread has its own local variable that is also updates and prints. The turn taking is done using busy waiting semaphores.
+ * Description: Running the 2 producers, 2 consumers problem using semaphores in
+ * sem.h.
  */
- 
- int value;
-struct sem_t *sem1, *sem2;
+
+#define BUFFER_SIZE 32
+
+struct mesg {
+	int id;
+	int value;
+};
+
+struct sem_t *mutex, *fillCount, *emptyCount;
+struct mesg buffer[BUFFER_SIZE];
+int bufferCount = 0;
  
  //Thread Functions
- void thread1(void) {
+ void producer1(void) {
  	static int local = 0;
+	struct mesg *message = malloc(sizeof(struct mesg));
+	message->id = 1;
  	while(1) {
- 		P(sem1);
- 		printf("Thread1: Local value = %d, Global Value = %d\n",local++,value++);
- 		V(sem2);
+ 		P(emptyCount);
+		P(mutex);
+		message->value = local++;
+ 		buffer[bufferCount++]=*message;
+ 		V(mutex);
+		V(fillCount);
+ 	}
+ }
+ void producer2(void) {
+ 	static int local = 0;
+	struct mesg *message = malloc(sizeof(struct mesg));
+	message->id = 2;
+ 	while(1) {
+ 		P(emptyCount);
+		P(mutex);
+		message->value = local++;
+ 		buffer[bufferCount++]=*message;
+ 		V(mutex);
+		V(fillCount);
  	}
  }
  
- void thread2(void) {
- 	static int local = 0;
+ void consumer1(void) {
  	while(1) {
- 		P(sem2);
- 		printf("Thread2: Local value = %d, Global Value = %d\n",local++,value++);
- 		V(sem1);
+ 		P(fillCount);
+		P(mutex);
+		bufferCount--;
+ 		printf("Consumer 1 got value %d from Producer %d\n",buffer[bufferCount].value,buffer[bufferCount].id);
+ 		V(mutex);
+		V(emptyCount);
+ 	}
+ }
+
+ void consumer2(void) {
+ 	while(1) {
+ 		P(fillCount);
+		P(mutex);
+		bufferCount--;
+ 		printf("Consumer 2 got value %d from Producer %d\n",buffer[bufferCount].value,buffer[bufferCount].id);
+ 		V(mutex);
+		V(emptyCount);
  	}
  }
  
  int main() {
-	sem1 = malloc(sizeof(sem_t));
-	sem2 = malloc(sizeof(sem_t));	
+	mutex = malloc(sizeof(sem_t));
+	fillCount = malloc(sizeof(sem_t));
+	emptyCount = malloc(sizeof(sem_t));	
  	RunQ = malloc(sizeof(queue)); //Init RunQ
-	sem1->semQ = malloc(sizeof(queue));
-	sem2->semQ = malloc(sizeof(queue));
+	mutex->semQ = malloc(sizeof(queue));
+	fillCount->semQ = malloc(sizeof(queue));
+	emptyCount->semQ = malloc(sizeof(queue));
 	InitQueue(RunQ);
-	InitQueue(sem1->semQ);
-	InitQueue(sem2->semQ);
- 	value = 0;
- 	InitSem(sem1,1);
- 	InitSem(sem2,0);
- 	start_thread(&thread1); //Start Threads
- 	start_thread(&thread2);
+	InitQueue(mutex->semQ);
+	InitQueue(fillCount->semQ);
+	InitQueue(emptyCount->semQ);
+ 	InitSem(mutex,1);
+ 	InitSem(fillCount,0);
+	InitSem(emptyCount,BUFFER_SIZE);
+ 	start_thread(&producer1); //Start Threads
+ 	start_thread(&producer2);
+	start_thread(&consumer2);
+	start_thread(&consumer1);
  	run(); //Run
  }
