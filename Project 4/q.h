@@ -25,27 +25,22 @@ void InitQueue(queue* q) {
 }
 
 void AddQueue(queue* q, TCB_t* item) {
-    if(q->head != NULL) // Queue is not empty
-    {
-	    if(q->head->next != NULL) 
-        {
-            item->prev = q->head->prev;
-            item->next = q->head;
-            q->head->prev->next = item;
-            q->head->prev = item;
+    	if(q->head != NULL) {
+		if(q->head->next != NULL) {
+    		        item->prev = q->head->prev;
+    		        item->next = q->head;
+     		       	q->head->prev->next = item;
+     		       	q->head->prev = item;
 		} 
-
-        else 
-        {
-            q->head->next = item;
-            q->head->prev = item;
-            item->next = q->head;
-            item->prev = q->head;
+		else {
+            		q->head->next = item;
+            		q->head->prev = item;
+            		item->next = q->head;
+            		item->prev = q->head;
 		}
-	} 
+    } 
 
-    else // Queue is empty
-    {
+    else {
         q->head = item;
         item->prev = NULL;
         item->next = NULL;
@@ -55,20 +50,16 @@ void AddQueue(queue* q, TCB_t* item) {
 TCB_t* DelQueue(queue* q) {
 	TCB_t* returnValue = q->head;
 
-    if(q->head != NULL) 
-    {
-        if(q->head->next != NULL) 
-        {
-            q->head->prev->next = q->head->next;
-            q->head->next->prev = q->head->prev;
-            q->head = q->head->next;
-        }
-
-        else 
-        {
-            q->head = NULL;
-        }
-    }
+    	if(q->head != NULL) {
+        	if(q->head->next != NULL) {
+            		q->head->prev->next = q->head->next;
+            		q->head->next->prev = q->head->prev;
+            		q->head = q->head->next;
+        	}
+        	else {
+            		q->head = NULL;
+        	}
+    	}
 	
 	return returnValue;
 }

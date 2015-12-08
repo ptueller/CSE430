@@ -15,120 +15,123 @@ int rc =0;
 int rwc = 0;
 int wwc = 0;
 
-void reader_entry();
-void reader_exit();
-void writer_entry();
-void writer_exit();
 
 //Thread Functions
 void reader1(void) {
 	while(1) {
-		reader_entry();
+		P(mutex);
+		if (wwc > 0 || wc > 0)
+		{
+			rwc++;
+			V(mutex);
+			P(rsem);
+			rwc--;
+		}
+		rc++;
+		if (rwc > 0) V(rsem);
+		else V(mutex);
 
 		printf("Reader 1 got value %d from Writer\n",value);
-		sleep(1);
 
-		reader_exit();
+		P(mutex);
+		rc--;
+		if (rc == 0 && wwc > 0) V(wsem);
+		else V(mutex);
 	}	
  }
  void reader2(void) {
  	while(1) {
-		reader_entry();
+		P(mutex);
+		if (wwc > 0 || wc > 0)
+		{
+			rwc++;
+			V(mutex);
+			P(rsem);
+			rwc--;
+		}
+		rc++;
+		if (rwc > 0) V(rsem);
+		else V(mutex);
 
 		printf("Reader 2 got value %d from Writer\n",value);
-		sleep(1);
 
-		reader_exit();
+		P(mutex);
+		rc--;
+		if (rc == 0 && wwc > 0) V(wsem);
+		else V(mutex);
  	}
  }
 
  void reader3(void) {
  	while(1) {
-		reader_entry();
+		P(mutex);
+		if (wwc > 0 || wc > 0)
+		{
+			rwc++;
+			V(mutex);
+			P(rsem);
+			rwc--;
+		}
+		rc++;
+		if (rwc > 0) V(rsem);
+		else V(mutex);
 
 		printf("Reader 3 got value %d from Writer\n",value);
-		sleep(1);
 
-		reader_exit();
+		P(mutex);
+		rc--;
+		if (rc == 0 && wwc > 0) V(wsem);
+		else V(mutex);
  	}
  }
  
  void writer1(void) {
  	static int local = 0;
  	while(1) {
- 		writer_entry();
+		P(mutex);
+		if (rc > 0 || wc > 0)
+		{
+			wwc++;
+			V(mutex);
+			P(wsem);
+			wwc--;
+		}
+		wc++;
+		V(mutex);
 
 		value = ++local;
 		printf("Writer 1 wrote %d\n",local);
-		sleep(1);
 
-		writer_exit();
+		P(mutex);
+		wc--;
+		if (rwc > 0) V(rsem);
+		else if (wwc > 0) V(wsem);
  	}
  }
 
  void writer2(void) {
  	static int local = 0;
  	while(1) {
- 		writer_entry();
-		
+		P(mutex);
+		if (rc > 0 || wc > 0)
+		{
+			wwc++;
+			V(mutex);
+			P(wsem);
+			wwc--;
+		}
+		wc++;
+		V(mutex);
+
 		value = ++local;
 		printf("Writer 2 wrote %d\n",local);
-		sleep(1);
 
-		writer_exit();
+		P(mutex);
+		wc--;
+		if (rwc > 0) V(rsem);
+		else if (wwc > 0) V(wsem);
  	}
  }
-
-void reader_entry()
-{
-	P(mutex);
-	if (wwc > 0 || wc > 0)
-	{
-		rwc++;
-		V(mutex);
-		P(rsem);
-		rwc--;
-	}
-	rc++;
-	if (rwc > 0)
-		V(rsem);
-	else
-		V(mutex);
-}
-
-void reader_exit()
-{
-	P(mutex);
-	rc--;
-	if (rc == 0 && wwc > 0)
-		V(wsem);
-	else
-		V(mutex);
-}
-
-void writer_entry()
-{
-	P(mutex);
-	if (rc > 0 || wc > 0)
-	{
-		wwc++;
-		V(mutex);
-		P(wsem);
-		wwc--;
-	}
-	wc++;
-	V(mutex);
-}
-
-void writer_exit()
-{
-	P(mutex);
-	wc--;
-	if (rwc > 0)
-		V(rsem);
-	else if (wwc > 0)
-		V(wsem);
-}
  
  int main() {
 	mutex = malloc(sizeof(sem_t));
